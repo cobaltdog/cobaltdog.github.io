@@ -1,0 +1,72 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>Tray — Trishit Dedhia</title>
+  <meta name="robots" content="noindex, nofollow">
+  <meta name="theme-color" content="#f2f0eb">
+  <script>
+    // Bounce anyone who hasn't unlocked from the landing page.
+    try { if (sessionStorage.getItem("tray-unlocked") !== "1") location.replace("/"); } catch (_) { location.replace("/"); }
+  </script>
+  <link rel="preconnect" href="https://api.fontshare.com">
+  <link rel="preconnect" href="https://fonts.googleapis.com">
+  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+  <link href="https://api.fontshare.com/v2/css?f[]=satoshi@500,700&display=swap" rel="stylesheet">
+  <link href="https://fonts.googleapis.com/css2?family=JetBrains+Mono:wght@400;500&display=swap" rel="stylesheet">
+  <link rel="stylesheet" href="/assets/style.css">
+</head>
+<body>
+  <header class="top">
+    <a class="wordmark" href="/">Trishit Dedhia<span>.</span></a>
+    <div class="top-right">
+      <span class="mono muted">Tray / Unlocked</span>
+      <button class="icon-btn" id="lock-btn" type="button" aria-label="Lock the tray and return home">
+        <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.6" stroke-linecap="square" aria-hidden="true">
+          <rect x="5" y="11" width="14" height="10"/>
+          <path d="M8 11V7a4 4 0 0 1 8 0v4"/>
+        </svg>
+      </button>
+    </div>
+  </header>
+
+  <main>
+    <section class="tray-head">
+      <h1>Tray<span class="dot">.</span></h1>
+      <p class="rules mono muted">
+        Drop a file to store it. Download anything here.<br>
+        Max 5 items · 100 MB total.<br>
+        When full, the oldest item is removed first.
+      </p>
+    </section>
+
+    <div class="meter mono">
+      <span class="label" id="used">0 MB / 100 MB</span>
+      <div class="bar-wrap"><div class="bar" id="bar" role="progressbar" aria-label="Storage used" aria-valuemin="0" aria-valuemax="100" aria-valuenow="0"><i></i></div></div>
+      <span class="count" id="count">0 / 5</span>
+    </div>
+
+    <label class="drop" id="drop">
+      <input type="file" id="file" aria-label="Choose a file to drop in the tray">
+      <span>
+        <strong id="drop-label">Drop a file</strong>
+        <span class="mono muted">or click to browse · up to 100 MB</span>
+      </span>
+    </label>
+
+    <ol class="slots" id="slots" aria-live="polite"></ol>
+  </main>
+
+  <footer class="foot mono muted">
+    <span>Files are shared with anyone who has the password.</span>
+    <span>Tray v1</span>
+  </footer>
+
+  <div class="toast mono" id="toast" role="status"></div>
+
+  <script src="https://cdn.jsdelivr.net/npm/@supabase/supabase-js@2"></script>
+  <script src="/assets/config.js"></script>
+  <script src="/assets/tray.js"></script>
+</body>
+</html>

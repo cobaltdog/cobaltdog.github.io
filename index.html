@@ -3,9 +3,105 @@
 <head>
   <meta charset="UTF-8">
   <meta name="viewport" content="width=device-width, initial-scale=1.0">
-  <title>Test Webpage</title>
+  <title>Trishit Dedhia — Under construction</title>
+  <meta name="description" content="Trishit Dedhia, aerospace engineer. The website is temporarily under construction.">
+  <meta name="theme-color" content="#f2f0eb">
+  <link rel="preconnect" href="https://api.fontshare.com">
+  <link rel="preconnect" href="https://fonts.googleapis.com">
+  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+  <link href="https://api.fontshare.com/v2/css?f[]=satoshi@500,700&display=swap" rel="stylesheet">
+  <link href="https://fonts.googleapis.com/css2?family=JetBrains+Mono:wght@400;500&display=swap" rel="stylesheet">
+  <link rel="stylesheet" href="/assets/style.css">
 </head>
 <body>
-  <h1>Test webpage</h1>
+  <header class="top">
+    <a class="wordmark" href="/">Trishit Dedhia<span>.</span></a>
+    <div class="top-right">
+      <span class="mono muted" id="clock" aria-hidden="true">SGT --:--</span>
+      <button class="icon-btn" id="tray-btn" type="button" aria-label="Open the tray (password required)" aria-haspopup="dialog">
+        <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.6" stroke-linecap="square" aria-hidden="true">
+          <path d="M3 13h5l1.5 3h5L16 13h5"/>
+          <path d="M3 13l2.5-8h13L21 13v6H3z"/>
+        </svg>
+      </button>
+    </div>
+  </header>
+
+  <main>
+    <section class="hero" aria-labelledby="title">
+      <p class="hero-index mono muted">(01) — Status</p>
+      <h1 class="hero-title" id="title">
+        <span class="line"><span>Website</span></span>
+        <span class="line"><span>under temporary</span></span>
+        <span class="line"><span>construction<span class="dot">.</span></span></span>
+      </h1>
+      <div class="hero-meta">
+        <p class="lede">A new site is being built. Check back soon.</p>
+        <div class="status">
+          <span class="mono muted">Build in progress</span>
+          <div class="progress" role="presentation"></div>
+        </div>
+      </div>
+    </section>
+  </main>
+
+  <footer class="foot mono muted">
+    <span>© <span id="year">2026</span> Trishit Dedhia</span>
+    <span>Singapore</span>
+  </footer>
+
+  <dialog id="lock" aria-labelledby="lock-title">
+    <div class="dialog-head mono">
+      <span>Tray / Locked</span>
+      <button class="close" type="button" id="lock-close">Close ✕</button>
+    </div>
+    <form class="dialog-body" id="lock-form" method="dialog" novalidate>
+      <h2 id="lock-title">Enter password</h2>
+      <label for="pw" class="sr-only">Password</label>
+      <div class="field">
+        <input id="pw" type="password" autocomplete="off" inputmode="text" required>
+        <button type="submit" class="mono">Unlock →</button>
+      </div>
+      <p class="error mono" id="pw-error" role="alert"></p>
+    </form>
+  </dialog>
+
+  <script>
+    (function () {
+      // NOTE: this gate is client-side only. It keeps casual visitors out; it is not security.
+      var PASSWORD = "123";
+      var dlg = document.getElementById("lock");
+      var form = document.getElementById("lock-form");
+      var pw = document.getElementById("pw");
+      var err = document.getElementById("pw-error");
+
+      document.getElementById("year").textContent = new Date().getFullYear();
+
+      var clock = document.getElementById("clock");
+      function tick() {
+        var t = new Date().toLocaleTimeString("en-GB", { hour: "2-digit", minute: "2-digit", timeZone: "Asia/Singapore" });
+        clock.textContent = "SGT " + t;
+      }
+      tick(); setInterval(tick, 15000);
+
+      document.getElementById("tray-btn").addEventListener("click", function () {
+        err.textContent = ""; pw.value = "";
+        dlg.showModal(); pw.focus();
+      });
+      document.getElementById("lock-close").addEventListener("click", function () { dlg.close(); });
+
+      form.addEventListener("submit", function (e) {
+        e.preventDefault();
+        if (pw.value === PASSWORD) {
+          try { sessionStorage.setItem("tray-unlocked", "1"); } catch (_) {}
+          location.href = "/tray/";
+        } else {
+          err.textContent = "Incorrect password";
+          form.classList.remove("shake"); void form.offsetWidth; form.classList.add("shake");
+          pw.select();
+        }
+      });
+    })();
+  </script>
 </body>
 </html>
