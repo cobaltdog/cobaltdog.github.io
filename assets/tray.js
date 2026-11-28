@@ -95,9 +95,43 @@
         var btn = document.createElement("button"); btn.className = "dl"; btn.type = "button"; btn.textContent = "Download";
         btn.setAttribute("aria-label", "Download " + displayName(it.path));
         btn.addEventListener("click", download.bind(null, it, btn));
-        li.append(num, name, meta, btn);
+        var share = document.createElement("button"); share.className = "dl icon"; share.type = "button";
+        share.setAttribute("aria-label", "Copy a public link to " + displayName(it.path));
+        share.title = "Copy public link (valid 7 days)";
+        share.innerHTML = LINK_ICON;
+        share.addEventListener("click", shareLink.bind(null, it, share));
+        li.append(num, name, meta, share, btn);
       }
       slotsEl.appendChild(li);
+    }
+  }
+
+  var LINK_ICON = '<svg viewBox="0 0 24 24" width="16" height="16" fill="none" stroke="currentColor" stroke-width="1.6" stroke-linecap="square" aria-hidden="true"><path d="M10 14a4 4 0 0 0 5.66 0l3-3a4 4 0 0 0-5.66-5.66l-1 1"/><path d="M14 10a4 4 0 0 0-5.66 0l-3 3a4 4 0 0 0 5.66 5.66l1-1"/></svg>';
+  var LINK_TTL = 7 * 24 * 60 * 60; // seconds
+
+  async function copyText(text) {
+    try { await navigator.clipboard.writeText(text); return true; }
+    catch (_) {
+      var ta = document.createElement("textarea");
+      ta.value = text; ta.setAttribute("readonly", ""); ta.style.position = "fixed"; ta.style.opacity = "0";
+      document.body.appendChild(ta); ta.select();
+      var ok = false; try { ok = document.execCommand("copy"); } catch (_) {}
+      ta.remove(); return ok;
+    }
+  }
+
+  async function shareLink(it, btn) {
+    btn.disabled = true;
+    var res = await store.createSignedUrl(it.path, LINK_TTL, { download: displayName(it.path) });
+    btn.disabled = false;
+    if (res.error || !res.data) { toast("Couldn’t create a link: " + (res.error ? res.error.message : "unknown error"), true); load(); return; }
+    var url = res.data.signedUrl;
+    if (await copyText(url)) {
+      btn.classList.add("ok");
+      setTimeout(function () { btn.classList.remove("ok"); }, 1600);
+      toast("Link copied. Works for 7 days, or until the file leaves the tray.");
+    } else {
+      window.prompt("Copy this link:", url);
     }
   }
 
